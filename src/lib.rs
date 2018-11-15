@@ -14,6 +14,7 @@ extern crate rand;
 extern crate termion;
 extern crate protobuf;
 extern crate libc;
+extern crate os_type;
 
 mod logging;
 mod serialization;

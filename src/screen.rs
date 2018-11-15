@@ -556,13 +556,22 @@ impl Screen {
             }
 
             if content.starts_with("http") {
-                let cmd = process::Command::new("firefox")
+                let process_name = match os_type::current_platform().os_type {
+                    os_type::OSType::OSX => { "open" }
+                    // TODO: Should probably use xdg-open or something similar
+                    _ => { "firefox" }
+                };
+
+                let cmd = process::Command::new(process_name)
                     .arg(content.to_owned())
                     .spawn();
+
                 if cmd.is_err() {
                     error!("command failed to start: {}", content);
                 }
-            } else {
+            }
+
+            else {
                 let shell = env::var("SHELL").unwrap_or("bash".to_owned());
                 let cmd = process::Command::new(shell)
                     .arg("-c")

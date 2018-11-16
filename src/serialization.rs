@@ -61,6 +61,7 @@ fn serialize_node(node: &Node) -> pb::Node {
     node_pb.set_y(node.rooted_coords.1 as u32);
     node_pb.set_meta(serialize_meta(&node.meta));
     node_pb.set_auto_arrange(node.auto_arrange);
+    node_pb.set_is_fs_path(node.is_fs_path);
     if let Some(ref free_text) = node.free_text {
         node_pb.set_free_text(free_text.to_owned());
     }
@@ -109,6 +110,7 @@ fn deserialize_node(node_pb: &pb::Node) -> Node {
         },
         color: random_fg_color(),
         auto_arrange: node_pb.get_auto_arrange(),
+        is_fs_path: node_pb.get_is_fs_path(),
     }
 }
 

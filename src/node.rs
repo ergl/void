@@ -15,6 +15,7 @@ pub struct Node {
     pub free_text: Option<String>,
     pub color: String,
     pub auto_arrange: bool,
+    pub is_fs_path: bool,
 }
 
 impl Default for Node {
@@ -33,6 +34,7 @@ impl Default for Node {
             free_text: None,
             color: random_fg_color(),
             auto_arrange: true,
+            is_fs_path: false,
         }
     }
 }

@@ -1,3 +1,5 @@
+extern crate dirs;
+
 use std;
 use std::cmp::{max, min};
 use std::collections::{BTreeMap, BinaryHeap, HashMap, HashSet};
@@ -138,6 +140,15 @@ impl Screen {
         let mut node = Node::default();
         let id = self.new_node_id();
         node.id = id;
+        self.nodes.insert(id, node);
+        id
+    }
+
+    fn new_fs_node(&mut self) -> NodeID {
+        let mut node = Node::default();
+        let id = self.new_node_id();
+        node.id = id;
+        node.is_fs_path = true;
         self.nodes.insert(id, node);
         id
     }
@@ -537,6 +548,14 @@ impl Screen {
             return;
         }
         if let Some(selected_id) = self.selected {
+            let is_fs_node = self.with_node(selected_id, |n| n.is_fs_path)
+                .unwrap_or(false);
+
+            if is_fs_node {
+                self.exec_fs_integration(selected_id);
+                return;
+            }
+
             let content_opt = self.with_node(selected_id, |n| n.content.clone());
             if content_opt.is_none() {
                 error!("tried to exec deleted node");
@@ -553,6 +572,10 @@ impl Screen {
             if content.starts_with("txt:") {
                 self.exec_text_editor(selected_id);
                 return;
+            }
+
+            if content.starts_with("~") {
+                self.exec_fs_integration(selected_id);
             }
 
             if content.starts_with("http") {
@@ -582,6 +605,69 @@ impl Screen {
                 }
             }
         }
+    }
+
+    fn exec_fs_integration(&mut self, node_id: NodeID) {
+        let os = os_type::current_platform().os_type;
+        if os != os_type::OSType::OSX {
+            error!("Don't know how to open path entries on {:?}", os);
+            return;
+        }
+
+        let content = self.with_node(node_id, |n| n.content.clone())
+            .unwrap_or("".to_owned());
+
+        let mut full_path = self.fs_get_path_for_fs_node(node_id, content);
+        full_path = full_path.trim_start_matches("~").to_string();
+        if full_path.starts_with("/") {
+            full_path = full_path.trim_start_matches("/").to_string();
+        }
+
+        info!("open path: {}", full_path);
+
+        if let Some(home) = dirs::home_dir() {
+            let cmd = process::Command::new("open")
+                .current_dir(home)
+                .stdout(process::Stdio::null())
+                .stderr(process::Stdio::null())
+                .arg(full_path.to_owned())
+                .spawn();
+
+            if cmd.is_err() {
+                error!("command failed to start: {}", full_path);
+            }
+        }
+
+        // Set fs path to true
+        self.with_node_mut(node_id, |n| n.is_fs_path = true)
+            .unwrap();
+    }
+
+    fn fs_get_path_for_fs_node(&mut self, node_id: NodeID, base_content: String) -> String {
+        let mut path_vec = vec![base_content];
+        self.fs_get_complete_path(node_id, &mut path_vec);
+        path_vec.reverse();
+        path_vec.join("/")
+    }
+
+    fn fs_get_complete_path(&mut self, node_id: NodeID, acc: &mut Vec<String>) {
+        let parent_id = self.with_node(node_id, |n| n.parent_id).unwrap();
+        if parent_id == self.drawing_root {
+            return;
+        }
+
+        let is_parent_fs = self.with_node(parent_id, |n| n.is_fs_path)
+            .unwrap_or(false);
+
+        if !is_parent_fs {
+            return;
+        }
+
+        let parent_content = self.with_node(parent_id, |n| n.content.clone())
+            .unwrap_or("".to_owned());
+
+        acc.push(parent_content);
+        self.fs_get_complete_path(parent_id, acc);
     }
 
     fn exec_text_editor(&mut self, node_id: NodeID) {
@@ -984,8 +1070,15 @@ impl Screen {
                 selected_id = above;
             }
             let selected_id = selected_id;
+            let parent_is_fs = self.with_node(selected_id, |n| n.is_fs_path)
+                .unwrap_or(false);
 
-            let node_id = self.new_node();
+            let node_id = if parent_is_fs {
+                self.new_fs_node()
+            } else {
+                self.new_node()
+            };
+
             self.with_node_mut_no_meta(node_id, |node| node.parent_id = selected_id);
             let added = self.with_node_mut_no_meta(
                 selected_id,
@@ -1021,7 +1114,15 @@ impl Screen {
                     self.create_child();
                     return;
                 }
-                let node_id = self.new_node();
+
+                let parent_is_fs = self.with_node(parent_id, |n| n.is_fs_path)
+                    .unwrap_or(false);
+
+                let node_id = if parent_is_fs {
+                    self.new_fs_node()
+                } else {
+                    self.new_node()
+                };
 
                 self.with_node_mut_no_meta(node_id, |node| node.parent_id = parent_id);
                 let added = self.with_node_mut_no_meta(parent_id, |parent| {

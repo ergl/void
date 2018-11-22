@@ -1,7 +1,7 @@
 unselect:esc
 scroll_up:pgup
 scroll_down:pgdn
-delete:del
+delete:C-x
 select_up:up
 select_down:down
 select_left:left
@@ -20,7 +20,7 @@ arrow:C-r
 auto_arrange:C-p
 toggle_collapsed:C-t
 quit:C-c
-save:C-x
+save:C-s
 toggle_show_logs:C-l
 enter_command:C-e
 find_task:C-v

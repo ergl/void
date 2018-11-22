@@ -11,6 +11,7 @@ pub fn serialize_screen(screen: &Screen) -> Vec<u8> {
         .map(|(_, node)| serialize_node(node))
         .collect();
     screen_pb.set_nodes(protobuf::RepeatedField::from_vec(nodes));
+
     let arrows = screen.arrows
         .iter()
         .map(|&(from, to)| {

@@ -51,9 +51,17 @@ fn main() {
 
     f.read_to_end(&mut data).unwrap();
 
-    let saved_screen = deserialize_screen(data).ok();
+    let mut screen: Screen;
+    match deserialize_screen(data) {
+        Ok(screen_data) => {
+            screen = screen_data;
+        },
+        Err(e) => {
+            info!("Got error {} from deserialize screen", e);
+            screen = Screen::default()
+        }
+    }
 
-    let mut screen = saved_screen.unwrap_or_else(Screen::default);
     screen.work_path = path.clone();
 
     let config = Config::maybe_parsed_from_env().unwrap();

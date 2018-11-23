@@ -17,6 +17,7 @@ path = "test/test.rs"
 default = []
 
 [dependencies]
+orion="0.9.1"
 os_type="2.2"
 dirs="1.0"
 termion = "1.1"

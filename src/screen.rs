@@ -20,8 +20,8 @@ use time;
 use unicode_segmentation::UnicodeSegmentation;
 
 use crate::{
-    cost, dateparse, distances, logging, plot, random_fg_color, re_matches, serialization, Action,
-    Config, Coords, Dir, Node, NodeID, Pack, TagDB,
+    cost, dateparse, distances, encryption, logging, plot, random_fg_color, re_matches,
+    serialization, Action, Config, Coords, Dir, Node, NodeID, Pack, TagDB,
 };
 
 pub struct Screen {
@@ -29,6 +29,7 @@ pub struct Screen {
     pub nodes: HashMap<NodeID, Node>,
     pub arrows: Vec<(NodeID, NodeID)>,
     pub work_path: Option<String>,
+    pub secret_key_hint: Option<String>,
     pub config: Config,
 
     // screen dimensions as detected during the current draw() cycle
@@ -94,6 +95,7 @@ impl Default for Screen {
             dragging_from: None,
             dragging_to: None,
             work_path: None,
+            secret_key_hint: None,
             max_id: 0,
             dims: (1, 1),
             lowest_drawn: 0,
@@ -1737,7 +1739,11 @@ impl Screen {
                 warn!("removed stale tmp file");
             }
             let mut f = File::create(&tmp_path).unwrap();
-            f.write_all(&*data).unwrap();
+            if let Some(ref key) = self.secret_key_hint {
+                f.write_all(&*encryption::seal_file(key, data)).unwrap();
+            } else {
+                f.write_all(&*data).unwrap();
+            }
             f.sync_all().unwrap();
             rename(tmp_path, path).unwrap();
             info!("saved work to {}", path);

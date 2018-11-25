@@ -701,12 +701,25 @@ impl Screen {
 
         // open text editor
         let ed = env::var("EDITOR").unwrap_or("vim".to_owned());
-        process::Command::new(ed)
-            .arg(&path)
-            .spawn()
-            .expect("failed to open text editor")
-            .wait()
-            .unwrap();
+        if ed == "vim" {
+            // If vim, set max columns to 80
+            process::Command::new(ed)
+                .arg("-c")
+                .arg("set textwidth=80")
+                .arg(&path)
+                .spawn()
+                .expect("failed to open text editor")
+                .wait()
+                .unwrap();
+        } else {
+            process::Command::new(ed)
+                .arg("set textwidth=80")
+                .arg(&path)
+                .spawn()
+                .expect("failed to open text editor")
+                .wait()
+                .unwrap();
+        };
 
         // read new data
         let mut data = vec![];

@@ -225,10 +225,7 @@ impl Screen {
                     Action::Arrow => self.add_or_remove_arrow(),
                     Action::AutoArrange => self.toggle_auto_arrange(),
                     Action::ToggleCollapsed => self.toggle_collapsed(),
-                    Action::Quit => {
-                        self.save();
-                        return false
-                    },
+                    Action::Quit => return false,
                     Action::Save => self.save(),
                     Action::ToggleShowLogs => self.toggle_show_logs(),
                     Action::EnterCmd => self.enter_cmd(),

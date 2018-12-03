@@ -35,7 +35,7 @@ This is an attempt to address several cognitive defects.
 * you can drill-down the screen focus arbitrarily
 * trees of tasks can be marked with `#task`, all children of marked nodes are implicitly subtasks
 * tasks can be prioritized with `#prio=<n>`, all children implicitly inherit the lowest ancestor's priority
-* a task can be chosen automatically, with priorities weighting a random selection. you should delete it or do it, don't get into the habit of drawing again until you see something you like.  you chose the priorities, and you should keep them up-to-date.
+* a task can be chosen automatically, with priorities weighting a random selection. you should delete it or do it, don't get into the habit of drawing again until you see something you like. you chose the priorities, and you should keep them up-to-date.
 * you can create your own sparklines by using `#plot=done` or `#plot=new`, in combination with `#n=10` for sparkline size, `#since=7d` / `#until=1d` for specifying time window.
 * overall completed subtasks are plotted on a sparkline at the top of the screen for the past week.
 * you can draw arrows between nodes for mind-mapping functionality

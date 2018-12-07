@@ -1,7 +1,7 @@
 use protobuf::{self, Message};
 
-use {Screen, Node, Meta, random_fg_color};
-use pb;
+use crate::{Screen, Node, Meta, random_fg_color};
+use crate::pb;
 
 pub fn serialize_screen(screen: &Screen) -> Vec<u8> {
     let mut screen_pb = pb::Screen::default();

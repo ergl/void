@@ -1,10 +1,4 @@
-extern crate getopts;
-extern crate fs2;
-extern crate dirs;
-extern crate voidmap;
-
-#[macro_use]
-extern crate log;
+use log::info;
 
 use std::fs::OpenOptions;
 use std::io::Read;

@@ -1,4 +1,4 @@
-use {Coords, NodeID, Meta, random_fg_color};
+use crate::{Coords, NodeID, Meta, random_fg_color};
 
 #[derive(Debug,Clone)]
 pub struct Node {

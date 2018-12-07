@@ -6,16 +6,6 @@ extern crate lazy_static;
 #[macro_use]
 extern crate log;
 
-extern crate unicode_segmentation;
-extern crate regex;
-extern crate time;
-extern crate hyper;
-extern crate rand;
-extern crate termion;
-extern crate protobuf;
-extern crate libc;
-extern crate os_type;
-
 mod logging;
 mod serialization;
 mod screen;
@@ -35,16 +25,16 @@ use std::collections::HashMap;
 
 use regex::Regex;
 
-pub use serialization::{serialize_screen, deserialize_screen};
-pub use screen::Screen;
-pub use node::Node;
-pub use pack::Pack;
-pub use colors::random_fg_color;
-pub use config::{Config, Action};
-pub use logging::init_screen_log;
-pub use meta::Meta;
-pub use tagdb::TagDB;
-pub use dateparse::dateparse;
+pub use crate::serialization::{serialize_screen, deserialize_screen};
+pub use crate::screen::Screen;
+pub use crate::node::Node;
+pub use crate::pack::Pack;
+pub use crate::colors::random_fg_color;
+pub use crate::config::{Config, Action};
+pub use crate::logging::init_screen_log;
+pub use crate::meta::Meta;
+pub use crate::tagdb::TagDB;
+pub use crate::dateparse::dateparse;
 
 pub type Coords = (u16, u16);
 pub type NodeID = u64;

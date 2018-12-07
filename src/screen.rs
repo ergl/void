@@ -1,5 +1,3 @@
-extern crate dirs;
-
 use std;
 use std::cmp::{max, min};
 use std::collections::{BTreeMap, BinaryHeap, HashMap, HashSet};
@@ -21,7 +19,7 @@ use regex::Regex;
 use time;
 use unicode_segmentation::UnicodeSegmentation;
 
-use {Action, Config, Coords, Dir, Node, NodeID, Pack, TagDB, cost, dateparse, distances, logging,
+use crate::{Action, Config, Coords, Dir, Node, NodeID, Pack, TagDB, cost, dateparse, distances, logging,
      plot, random_fg_color, re_matches, serialization};
 
 pub struct Screen {
@@ -771,7 +769,7 @@ impl Screen {
     pub fn recursive_child_filter_map<F, B>(
         &self,
         node_id: NodeID,
-        mut filter_map: &mut F,
+        filter_map: &mut F,
     ) -> Vec<B>
         where F: FnMut(&Node) -> Option<B>
     {

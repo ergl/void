@@ -3,17 +3,17 @@ use std::env;
 use std::fs::OpenOptions;
 use std::io::Write;
 
-use log::{self, LogRecord, LogLevel, LogLevelFilter, LogMetadata, SetLoggerError};
+use log::{self, Record, Level, LevelFilter, Metadata, SetLoggerError};
 use time;
 
 struct ScreenLogger;
 
 impl log::Log for ScreenLogger {
-    fn enabled(&self, metadata: &LogMetadata) -> bool {
-        metadata.level() <= LogLevel::Info
+    fn enabled(&self, metadata: &Metadata) -> bool {
+        metadata.level() <= Level::Info
     }
 
-    fn log(&self, record: &LogRecord) {
+    fn log(&self, record: &Record) {
         if self.enabled(record.metadata()) {
             let line = format!("{} - {}", record.level(), record.args());
             let mut logs = LOGS.write().unwrap();
@@ -23,8 +23,8 @@ impl log::Log for ScreenLogger {
         let line = format!("{} {} {}:{}] {}\n",
                            time::get_time().sec,
                            record.level(),
-                           record.location().file().split("/").last().unwrap(),
-                           record.location().line(),
+                           record.file().map_or("", |f| f.split("/").last().unwrap()),
+                           record.line().unwrap_or_default(),
                            record.args());
 
         if let Ok(path) = env::var("LOGFILE") {
@@ -36,13 +36,13 @@ impl log::Log for ScreenLogger {
             f.write_all(line.as_bytes()).unwrap();
         }
     }
+
+    fn flush(&self) {}
 }
 
 pub fn init_screen_log() -> Result<(), SetLoggerError> {
-    log::set_logger(|max_log_level| {
-        max_log_level.set(LogLevelFilter::Debug);
-        Box::new(ScreenLogger)
-    })
+    log::set_boxed_logger(Box::new(ScreenLogger))
+        .map(|()| log::set_max_level(LevelFilter::Debug))
 }
 
 pub fn read_logs() -> Vec<String> {

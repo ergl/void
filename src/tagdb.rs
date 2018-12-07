@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use regex::Regex;
 
-use crate::{NodeID, re_matches};
+use crate::{re_matches, NodeID};
 
 pub struct TagDB {
     node_to_tags: HashMap<NodeID, HashSet<String>>,
@@ -34,7 +34,8 @@ impl TagDB {
                 tags.insert(tag.clone());
             }
 
-            let mut nodes = self.tag_to_nodes
+            let mut nodes = self
+                .tag_to_nodes
                 .remove(tag)
                 .unwrap_or_else(|| HashSet::new());
 
@@ -51,7 +52,8 @@ impl TagDB {
                     tags.insert(tag.clone());
                 }
 
-                let mut nodes = self.tag_to_nodes
+                let mut nodes = self
+                    .tag_to_nodes
                     .remove(tag)
                     .unwrap_or_else(|| HashSet::new());
 
@@ -73,7 +75,8 @@ impl TagDB {
     }
 
     pub fn tag_to_nodes(&self, tag: &str) -> Vec<NodeID> {
-        let mut res = self.tag_to_nodes
+        let mut res = self
+            .tag_to_nodes
             .get(&tag.to_owned())
             .map(|set| set.clone().into_iter().collect())
             .unwrap_or_else(|| vec![]);

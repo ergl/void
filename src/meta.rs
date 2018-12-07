@@ -1,6 +1,6 @@
+use std::collections::HashMap;
 use std::env;
 use std::io::{self, Read};
-use std::collections::HashMap;
 use std::num;
 
 use hyper;
@@ -9,9 +9,9 @@ use time;
 
 lazy_static! {
     static ref LOC: (f32, f32) = gps_query().unwrap_or_else(|e| {
-                error!("failed to get gps: {:?}", e);
-                (0.0, 0.0)
-            });
+        error!("failed to get gps: {:?}", e);
+        (0.0, 0.0)
+    });
 }
 
 #[derive(Debug, Clone)]
@@ -91,7 +91,6 @@ impl From<hyper::Error> for GpsError {
         GpsError::Hyper(err)
     }
 }
-
 
 impl From<io::Error> for GpsError {
     fn from(err: io::Error) -> GpsError {

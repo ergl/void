@@ -1,40 +1,40 @@
-#![cfg_attr(feature="clippy", feature(plugin))]
-#![cfg_attr(feature="clippy", plugin(clippy))]
+#![cfg_attr(feature = "clippy", feature(plugin))]
+#![cfg_attr(feature = "clippy", plugin(clippy))]
 
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
 extern crate log;
 
+mod colors;
+mod config;
+mod dateparse;
 mod logging;
-mod serialization;
-mod screen;
+mod meta;
 mod node;
 mod pack;
-mod meta;
-mod plot;
-mod task;
-mod colors;
 mod pb;
-mod config;
+mod plot;
+mod screen;
+mod serialization;
 mod tagdb;
-mod dateparse;
+mod task;
 
 use std::cmp;
 use std::collections::HashMap;
 
 use regex::Regex;
 
-pub use crate::serialization::{serialize_screen, deserialize_screen};
-pub use crate::screen::Screen;
-pub use crate::node::Node;
-pub use crate::pack::Pack;
 pub use crate::colors::random_fg_color;
-pub use crate::config::{Config, Action};
+pub use crate::config::{Action, Config};
+pub use crate::dateparse::dateparse;
 pub use crate::logging::init_screen_log;
 pub use crate::meta::Meta;
+pub use crate::node::Node;
+pub use crate::pack::Pack;
+pub use crate::screen::Screen;
+pub use crate::serialization::{deserialize_screen, serialize_screen};
 pub use crate::tagdb::TagDB;
-pub use crate::dateparse::dateparse;
 
 pub type Coords = (u16, u16);
 pub type NodeID = u64;
@@ -74,6 +74,8 @@ pub fn re_matches<A: std::str::FromStr>(re: &Regex, on: &str) -> Vec<A> {
 #[test]
 fn test_regex_parsing() {
     let re = Regex::new(r"(\S+)").unwrap();
-    assert_eq!(re_matches::<String>(&re, "yo ho ho"),
-               vec!["yo".to_owned(), "ho".to_owned(), "ho".to_owned()]);
+    assert_eq!(
+        re_matches::<String>(&re, "yo ho ho"),
+        vec!["yo".to_owned(), "ho".to_owned(), "ho".to_owned()]
+    );
 }

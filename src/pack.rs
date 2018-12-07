@@ -74,7 +74,10 @@ impl Pack {
 
     fn dim(&self) -> Coords {
         trace!("dim({:?})", self);
-        (cmp::max(self.right, self.left) - self.left, cmp::max(self.bottom, self.top) - self.top)
+        (
+            cmp::max(self.right, self.left) - self.left,
+            cmp::max(self.bottom, self.top) - self.top,
+        )
     }
 
     fn is_leaf(&self) -> bool {

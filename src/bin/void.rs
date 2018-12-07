@@ -5,7 +5,7 @@ use std::io::Read;
 
 use fs2::FileExt;
 
-use voidmap::{Screen, Config, deserialize_screen, init_screen_log};
+use voidmap::{deserialize_screen, init_screen_log, Config, Screen};
 
 fn print_usage(program: &str) {
     println!("Usage: {} /path/to/workfile", program);
@@ -25,7 +25,8 @@ fn main() {
 
     // load from file if present
     let mut data = vec![];
-    let mut f = path.clone()
+    let mut f = path
+        .clone()
         .map(|path| {
             OpenOptions::new()
                 .write(true)
@@ -49,7 +50,7 @@ fn main() {
     match deserialize_screen(data) {
         Ok(screen_data) => {
             screen = screen_data;
-        },
+        }
         Err(e) => {
             info!("Got error {} from deserialize screen", e);
             screen = Screen::default()

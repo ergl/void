@@ -1,12 +1,11 @@
-use std::fmt;
-use std::env;
-use std::fs::File;
 use std::collections::HashMap;
+use std::env;
+use std::fmt;
+use std::fs::File;
 use std::io::{self, Error, ErrorKind, Read};
 
 use regex::Regex;
 use termion::event::{Event, Key, MouseEvent};
-
 
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub enum Action {
@@ -105,13 +104,12 @@ fn str_to_key(input: String) -> Option<Key> {
         "backspace" => Some(Backspace),
         "enter" => Some(Char('\n')),
         "tab" => Some(Char('\t')),
-        other => {
-            RE.captures_iter(other)
-                .nth(0)
-                .and_then(|n| n.at(1))
-                .and_then(|r| r.chars().nth(0))
-                .map(|c| Ctrl(c))
-        }
+        other => RE
+            .captures_iter(other)
+            .nth(0)
+            .and_then(|n| n.at(1))
+            .and_then(|r| r.chars().nth(0))
+            .map(|c| Ctrl(c)),
     }
 }
 
@@ -159,8 +157,8 @@ impl Default for Config {
                 (Ctrl('z'), Action::UndoDelete),
                 (Ctrl('?'), Action::Help),
             ]
-                .into_iter()
-                .collect(),
+            .into_iter()
+            .collect(),
         }
     }
 }

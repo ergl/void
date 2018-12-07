@@ -1,9 +1,9 @@
-use std::sync::RwLock;
 use std::env;
 use std::fs::OpenOptions;
 use std::io::Write;
+use std::sync::RwLock;
 
-use log::{self, Record, Level, LevelFilter, Metadata, SetLoggerError};
+use log::{self, Level, LevelFilter, Metadata, Record, SetLoggerError};
 use time;
 
 struct ScreenLogger;
@@ -20,12 +20,14 @@ impl log::Log for ScreenLogger {
             logs.insert(0, line);
             logs.truncate(5);
         }
-        let line = format!("{} {} {}:{}] {}\n",
-                           time::get_time().sec,
-                           record.level(),
-                           record.file().map_or("", |f| f.split("/").last().unwrap()),
-                           record.line().unwrap_or_default(),
-                           record.args());
+        let line = format!(
+            "{} {} {}:{}] {}\n",
+            time::get_time().sec,
+            record.level(),
+            record.file().map_or("", |f| f.split("/").last().unwrap()),
+            record.line().unwrap_or_default(),
+            record.args()
+        );
 
         if let Ok(path) = env::var("LOGFILE") {
             let mut f = OpenOptions::new()
@@ -41,8 +43,7 @@ impl log::Log for ScreenLogger {
 }
 
 pub fn init_screen_log() -> Result<(), SetLoggerError> {
-    log::set_boxed_logger(Box::new(ScreenLogger))
-        .map(|()| log::set_max_level(LevelFilter::Debug))
+    log::set_boxed_logger(Box::new(ScreenLogger)).map(|()| log::set_max_level(LevelFilter::Debug))
 }
 
 pub fn read_logs() -> Vec<String> {

@@ -1052,6 +1052,7 @@ impl Screen {
 
             if should_break {
                 self.cleanup();
+                self.remove_orphans();
                 self.save();
                 break;
             }
@@ -1290,6 +1291,38 @@ impl Screen {
                 self.with_node(b, |n| error!("orphan node, have it cleaned up: {:?}", n));
                 0
             });
+        }
+    }
+
+    // remove orphan nodes from the screen
+    // triggered on close
+    fn remove_orphans(&mut self) {
+        let orphans: Vec<NodeID> = self
+            .nodes
+            .iter()
+            .filter(|&(&node_id, _)| self.is_orphan(node_id))
+            .map(|(k, _)| k.clone())
+            .collect();
+
+        for orphan in orphans {
+            self.nodes.remove(&orphan);
+        }
+    }
+
+    // return true if node has no parent
+    fn is_orphan(&self, n: NodeID) -> bool {
+        let mut ptr = n;
+        loop {
+            if ptr == 0 {
+                // reached top
+                return false;
+            }
+
+            if let Some(parent_id) = self.parent(ptr) {
+                ptr = parent_id;
+            } else {
+                return true;
+            }
         }
     }
 

@@ -40,6 +40,7 @@ pub struct Screen {
     show_logs: bool,
     selected: Option<NodeID>,
     cut: Option<NodeID>,
+    copy: Option<NodeID>,
     drawing_arrow: Option<NodeID>,
     lookup: HashMap<Coords, NodeID>,
     drawn_at: HashMap<NodeID, Coords>,
@@ -84,6 +85,7 @@ impl Default for Screen {
             arrows: vec![],
             selected: None,
             cut: None,
+            copy: None,
             drawing_arrow: None,
             nodes: HashMap::new(),
             lookup: HashMap::new(),
@@ -149,6 +151,19 @@ impl Screen {
         let id = self.new_node_id();
         node.id = id;
         node.is_fs_path = true;
+        self.nodes.insert(id, node);
+        id
+    }
+
+    // TODO(borja): Deep-copy children
+    fn new_node_from(&mut self, from_id: NodeID) -> NodeID {
+        let mut node = Node::default();
+        let id = self.new_node_id();
+        node.id = id;
+        self.with_node(from_id, |from_node| {
+            node.content = from_node.content.clone();
+            node.free_text = from_node.free_text.clone();
+        });
         self.nodes.insert(id, node);
         id
     }
@@ -232,7 +247,8 @@ impl Screen {
                 Action::ToggleShowLogs => self.toggle_show_logs(),
                 Action::EnterCmd => self.enter_cmd(),
                 Action::FindTask => self.auto_task(),
-                Action::YankPasteNode => self.cut_paste(),
+                Action::CutPasteNode => self.cut_paste(),
+                Action::CopyPasteNode => self.copy_paste(),
                 Action::RaiseSelected => self.raise_selected(),
                 Action::LowerSelected => self.lower_selected(),
                 Action::Search => self.search_forward(),
@@ -258,6 +274,24 @@ impl Screen {
             let root = self.drawing_root;
             self.reparent(cut, root);
         }
+    }
+
+    fn copy_paste(&mut self) {
+        if let Some(selected_id) = self.selected {
+            if let Some(copy) = self.copy.take() {
+                self.copy_to_parent(copy, selected_id);
+            } else {
+                self.copy = Some(selected_id);
+            }
+        } else if let Some(copy) = self.copy.take() {
+            let root = self.drawing_root;
+            self.copy_to_parent(copy, root);
+        }
+    }
+
+    fn copy_to_parent(&mut self, from_id: NodeID, parent_id: NodeID) {
+        let node_id = self.new_node_from(from_id);
+        self.reparent(node_id, parent_id);
     }
 
     fn reparent(&mut self, node_id: NodeID, parent_id: NodeID) {

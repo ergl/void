@@ -24,7 +24,8 @@ save:C-s
 toggle_show_logs:C-l
 enter_command:C-e
 find_task:C-v
-yank_paste_node:C-y
+cut_paste_node:C-y
+copy_paste_node:C-m
 raise_selected:C-g
 lower_selected:C-d
 search:C-u

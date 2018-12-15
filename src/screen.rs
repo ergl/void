@@ -1768,8 +1768,13 @@ impl Screen {
             return;
         }
         let from = self.drawing_arrow.take().unwrap();
-        if let Some(arrow) = self.selected.map(|to| (from, to)) {
-            let (from, to) = arrow;
+        if let Some(to) = self.selected {
+            // Don't allow cycles
+            if from == to {
+                return;
+            }
+
+            let arrow = (from, to);
             if self.nodes.get(&from).is_some() && self.nodes.get(&to).is_some() {
                 let contains = self.arrows.iter().fold(false, |acc, &(ref nl1, ref nl2)| {
                     if nl1 == &from && nl2 == &to {

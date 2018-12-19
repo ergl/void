@@ -636,16 +636,9 @@ impl Screen {
                 if cmd.is_err() {
                     error!("command failed to start: {}", content);
                 }
-            } else {
-                let shell = env::var("SHELL").unwrap_or("bash".to_owned());
-                let cmd = process::Command::new(shell)
-                    .arg("-c")
-                    .arg(content.to_owned())
-                    .spawn();
-                if cmd.is_err() {
-                    error!("command failed to start: {}", content);
-                }
             }
+
+            info!("don't know how to handle command: {}", content);
         }
     }
 

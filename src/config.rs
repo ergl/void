@@ -136,6 +136,8 @@ impl Default for Config {
                 (F(1), Action::PrefixJump),
                 (Char('\n'), Action::CreateSibling),
                 (Char('\t'), Action::CreateChild),
+                (Char('?'), Action::Help),
+                (Char('/'), Action::Search),
                 (Ctrl('n'), Action::CreateFreeNode),
                 (Ctrl('k'), Action::ExecSelected),
                 (Ctrl('w'), Action::DrillDown),
@@ -153,13 +155,10 @@ impl Default for Config {
                 (Ctrl('e'), Action::EnterCmd),
                 (Ctrl('v'), Action::FindTask),
                 (Ctrl('y'), Action::CutPasteNode),
-                // TODO(borja): ^M represents enter, don't use
-                (Ctrl('m'), Action::CopyPasteNode),
+                (Ctrl('u'), Action::CopyPasteNode),
                 (Ctrl('g'), Action::RaiseSelected),
                 (Ctrl('d'), Action::LowerSelected),
-                (Ctrl('u'), Action::Search),
-                (Ctrl('z'), Action::UndoDelete),
-                (Ctrl('?'), Action::Help),
+                (Ctrl('z'), Action::UndoDelete)
             ]
             .into_iter()
             .collect(),

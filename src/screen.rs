@@ -119,9 +119,9 @@ impl Default for Screen {
 impl Screen {
     fn help(&mut self) {
         self.cleanup();
-        print!("{}{}{}\n", cursor::Goto(1, 1), clear::All, self.config);
         self.start_raw_mode();
-        if let Err(_) = self.single_key_prompt("") {
+        print!("{}{}{}\n", cursor::Goto(1, 1), clear::All, self.config);
+        if let Err(_) = self.single_key_prompt("Press any key to exit") {
             // likely here because of testing
         }
     }

@@ -30,4 +30,4 @@ raise_selected:C-g
 lower_selected:C-d
 search:/
 undo_delete:C-z
-help:?
+help:F1

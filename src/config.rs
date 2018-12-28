@@ -136,7 +136,6 @@ impl Default for Config {
                 (F(1), Action::Help),
                 (Char('\n'), Action::CreateSibling),
                 (Char('\t'), Action::CreateChild),
-                (Char('/'), Action::Search),
                 (Ctrl('n'), Action::CreateFreeNode),
                 (Ctrl('k'), Action::ExecSelected),
                 (Ctrl('w'), Action::DrillDown),
@@ -154,7 +153,8 @@ impl Default for Config {
                 (Ctrl('e'), Action::EnterCmd),
                 (Ctrl('v'), Action::FindTask),
                 (Ctrl('y'), Action::CutPasteNode),
-                (Ctrl('u'), Action::CopyPasteNode),
+                (Ctrl('o'), Action::CopyPasteNode),
+                (Ctrl('u'), Action::Search),
                 (Ctrl('g'), Action::RaiseSelected),
                 (Ctrl('d'), Action::LowerSelected),
                 (Ctrl('z'), Action::UndoDelete)

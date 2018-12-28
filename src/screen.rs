@@ -211,7 +211,13 @@ impl Screen {
                     if self.selected.is_some() {
                         self.append(c);
                     } else {
-                        self.prefix_jump_to(c.to_string());
+                        if c == '/' {
+                            self.search_forward();
+                        } else if c == '?' {
+                            self.search_backward();
+                        } else {
+                            self.prefix_jump_to(c.to_string());
+                        }
                     }
                 }
                 Action::Help => self.help(),
